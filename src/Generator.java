@@ -81,7 +81,7 @@ public class Generator {
             }
         }
 
-        writeIn("", pathForNewFile); //to clear the file
+        writeInClear(pathForNewFile); //to clear the file
         //Output
         int j = settings.getHeightPage();
         for(String[] person : linesList)
@@ -116,8 +116,8 @@ public class Generator {
         return string;
     }
 
-    private static void writeIn(String str, String filePath) {
-        writeIn(str, false, filePath);
+    private static void writeInClear(String filePath) {
+        writeIn("", false, filePath);
     }
     private static void writeInLine(String str, String filePath) {
         writeIn(str + "\r\n", true, filePath);
@@ -135,7 +135,7 @@ public class Generator {
         }
     }
 
-    public static int getLineNumber() {
+    private static int getLineNumber() {
         return Thread.currentThread().getStackTrace()[2].getLineNumber();
     }
 
@@ -148,11 +148,11 @@ public class Generator {
         private Integer[] width;
         private String[] title;
 
-        private Settings() {
-            this("src/settings.xml");
-        }
+//        private Settings() {
+//            this("src/settings.xml");
+//        }
 
-        public Settings(String pathFile) {
+        private Settings(String pathFile) {
             file = new File(pathFile);
 
             try {
@@ -183,19 +183,19 @@ public class Generator {
             }
         }
 
-        public Integer getWidthPage() {
+        private Integer getWidthPage() {
             return widthPage;
         }
 
-        public Integer getHeightPage() {
+        private Integer getHeightPage() {
             return heightPage;
         }
 
-        public Integer getWidth(int column) {
+        private Integer getWidth(int column) {
             return width[column];
         }
 
-        public String getTitle(int column) {
+        private String getTitle(int column) {
             return title[column];
         }
     }
@@ -206,11 +206,11 @@ public class Generator {
         private File file;
         private String charsetName;
 
-        private SourceData() {
-            this("src/source-data.tsv");
-        }
+//        private SourceData() {
+//            this("src/source-data.tsv");
+//        }
 
-        public SourceData(String pathFile) {
+        private SourceData(String pathFile) {
             personInfo = new ArrayList<>();
             file = new File(pathFile);
             charsetName = "UTF16";
@@ -227,23 +227,19 @@ public class Generator {
             }
         }
 
-        public ArrayList<String[]> getPersonInfo() {
+        private ArrayList<String[]> getPersonInfo() {
             return personInfo;
         }
 
-        public String getCharsetName() {
-            return charsetName;
-        }
+//        public String getCharsetName() {
+//            return charsetName;
+//        }
 
-        public void setCharsetName(String charsetName) {
-            this.charsetName = charsetName;
-        }
-
-        public void writeAllData() {
-            for(String[] person : personInfo)
-            {
-                System.out.printf("Номер: %s, Дата: %s, Имя: %s\n", person[0], person[1], person[2]);
-            }
-        }
+//        private void writeAllData() {
+//            for(String[] person : personInfo)
+//            {
+//                System.out.printf("Номер: %s, Дата: %s, Имя: %s\n", person[0], person[1], person[2]);
+//            }
+//        }
     }
 }
