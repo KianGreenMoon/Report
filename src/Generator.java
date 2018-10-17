@@ -12,37 +12,65 @@ import java.util.Scanner;
 
 public class Generator {
     public static void main(String[] args) {
+//        Settings settings = new Settings("src/settings.xml");
+//        SourceData sourceData = new SourceData("src/source-data.tsv");
+//        String pathForNewFile = "test.txt";
         Settings settings = new Settings(args[0]);
         SourceData sourceData = new SourceData(args[1]);
         String pathForNewFile = args[2];
 
         ArrayList<String[]> personList = sourceData.getPersonInfo();
+        ArrayList<String[]> head = new ArrayList<>();
+        head.add(new String[] {settings.getTitle(0), settings.getTitle(1), settings.getTitle(2)});
 
-        //Head generate
-        String title1 = settings.getTitle(0);
-        if(title1.length() > settings.getWidth(0))
-            title1 = title1.substring(0,settings.getWidth(0));
-        else
-            title1 = formatForWrite(title1, settings.getWidth(0));
-
-        String title2 = settings.getTitle(1);
-        if(title2.length() > settings.getWidth(1))
-            title2 = title2.substring(0,settings.getWidth(1));
-        else
-            title2 = formatForWrite(title2, settings.getWidth(1));
-
-        String title3 = settings.getTitle(2);
-        if(title3.length() > settings.getWidth(2))
-            title3 = title3.substring(0,settings.getWidth(2));
-        else
-            title3 = formatForWrite(title3, settings.getWidth(2));
-
-        String head = "| " + title1 + " | " + title2 + " | " + title3 + " |";
-
+        //Head format
+        head = inputLines(head, settings);
 
         //Input and format:
-        ArrayList<String[]> linesList = new ArrayList<>();
+        personList = inputLines(personList, settings);
+
+        writeInClear(pathForNewFile); //to clear the file
+        //Output
+        int j = settings.getHeightPage();
         for(String[] person : personList)
+        {
+            //Names of columns (head)
+            if(j == settings.getHeightPage())
+            {
+                for(String headLine[] : head)
+                {
+                    String headStringOutPut = "| " + headLine[0] + " | " + headLine[1] + " | " + headLine[2] + " |";
+                    writeInLine(headStringOutPut, pathForNewFile);
+                    j--;
+                }
+            }
+
+            //Separator
+            if(person[0].matches("\\d++[\\s]*+") || j == settings.getHeightPage() - 1)
+                writeInLine(new String(new char[settings.getWidthPage()]).replace("\0", "-"), pathForNewFile);
+
+            //Print
+            String outPut = "| " + person[0] + " | " + person[1] + " | " + person[2] + " |";
+            writeInLine(outPut, pathForNewFile);
+            j--;
+
+            //Separator of blanks
+            if(j <= 0)
+            {
+                writeInLine("~", pathForNewFile);
+                j = settings.getHeightPage();
+            }
+        }
+    }
+
+    private static String formatForWrite(String string, Integer settingsWidth) {
+        string = string + new String(new char[settingsWidth - string.length()]).replace("\0", " ");
+        return string;
+    }
+
+    private static ArrayList<String[]> inputLines(ArrayList<String[]> sourcePersonList, Settings settings){
+        ArrayList<String[]> linesList = new ArrayList<>();
+        for(String[] person : sourcePersonList)
         {
             while(!person[0].equals("") || !person[1].equals("") || !person[2].equals(""))
             {
@@ -80,40 +108,7 @@ public class Generator {
                 linesList.add(outputLine);
             }
         }
-
-        writeInClear(pathForNewFile); //to clear the file
-        //Output
-        int j = settings.getHeightPage();
-        for(String[] person : linesList)
-        {
-            //Names of columns (head)
-            if(j == settings.getHeightPage())
-            {
-                writeInLine(head, pathForNewFile);
-                j--;
-            }
-
-            //Separator
-            if(person[0].matches("\\d++[\\s]*+") || j == settings.getHeightPage() - 1)
-                writeInLine(new String(new char[settings.getWidthPage()]).replace("\0", "-"), pathForNewFile);
-
-            //Print
-            String outPut = "| " + person[0] + " | " + person[1] + " | " + person[2] + " |";
-            writeInLine(outPut, pathForNewFile);
-            j--;
-
-            //Separator of blanks
-            if(j <= 0)
-            {
-                writeInLine("~", pathForNewFile);
-                j = settings.getHeightPage();
-            }
-        }
-    }
-
-    private static String formatForWrite(String string, Integer settingsWidth) {
-        string = string + new String(new char[settingsWidth - string.length()]).replace("\0", " ");
-        return string;
+        return linesList;
     }
 
     private static void writeInClear(String filePath) {
